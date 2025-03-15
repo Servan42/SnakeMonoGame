@@ -1,0 +1,1 @@
+Install and configure monogame framework: https://docs.monogame.net/articles/getting_started/index.html
