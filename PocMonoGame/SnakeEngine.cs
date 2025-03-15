@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PocMonoGame
 {
-    internal class SnakeBoard
+    internal class SnakeEngine
     {
         Random random;
 
@@ -14,11 +14,13 @@ namespace PocMonoGame
         private int height;
 
         private List<(int x, int y)> snake = new();
-        private Queue<(int x, int y)> path = new();
+        private Queue<(int x, int y)> pathToFood = new();
         private (int x, int y) food;
         private int bestScore;
+        // Set this to 0 to disable the rule where the food tries to spawn in a reachable position
+        private const int MAX_RETRIES_FOR_NEXT_FOOD = 100;
 
-        public SnakeBoard(int width, int height)
+        public SnakeEngine(int width, int height)
         {
             random = new Random();
             this.width = width;
@@ -45,29 +47,40 @@ namespace PocMonoGame
 
         internal void Tick()
         {
-            if(path.Count == 0)
+            if(pathToFood.Count == 0)
             {
-                food = GenerateRandomFoodPosition();
-                path = new Queue<(int x, int y)>(new Pathfinder().GeneratePathAstar(
-                    GetSnakeHeadPos(),
-                    food,
-                    width,
-                    height,
-                    snake.Contains
-                ));
-
-                if(path.Count == 0)
-                {
-                    bestScore = Math.Max(bestScore, snake.Count - 1);
-                    Reset();
-                }
+                GenerateNextFoodAndPathToIt();
             }
             else if( snake.Count > 0)
             {
                 snake.RemoveAt(0);
             }
 
-            snake.Add(path.Dequeue());
+            snake.Add(pathToFood.Dequeue());
+        }
+
+        private void GenerateNextFoodAndPathToIt()
+        {
+            int nbRetry = 0;
+            do
+            { 
+                food = GenerateRandomFoodPosition();
+                pathToFood = new Queue<(int x, int y)>(new Pathfinder().GeneratePathAstar(
+                    GetSnakeHeadPos(),
+                    food,
+                    width,
+                    height,
+                    snake.Contains
+                ));
+                nbRetry++;
+            }
+            while(pathToFood.Count == 0 && nbRetry < MAX_RETRIES_FOR_NEXT_FOOD);
+
+            if (pathToFood.Count == 0)
+            {
+                bestScore = Math.Max(bestScore, snake.Count - 1);
+                Reset();
+            }
         }
 
         internal string GetScoreString()
@@ -78,8 +91,8 @@ namespace PocMonoGame
         private void Reset()
         {
             snake.Clear();
-            path.Clear();
-            path.Enqueue(food);
+            pathToFood.Clear();
+            pathToFood.Enqueue(food);
         }
 
         private (int, int) GenerateRandomFoodPosition()

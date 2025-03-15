@@ -2,16 +2,13 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using static System.Net.Mime.MediaTypeNames;
 
 // https://docs.monogame.net/articles/getting_started/5_adding_basic_code.html
 namespace PocMonoGame
 {
     public class Game1 : Game
     {
-        SnakeBoard snakeBoard;
+        SnakeEngine snakeBoard;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -27,7 +24,7 @@ namespace PocMonoGame
             _graphics = new GraphicsDeviceManager(this);
             _graphics.PreferredBackBufferWidth = 1000;
             _graphics.PreferredBackBufferHeight = 1000;
-            this.snakeBoard = new SnakeBoard(_graphics.PreferredBackBufferWidth / 10, _graphics.PreferredBackBufferHeight / 10);
+            this.snakeBoard = new SnakeEngine(_graphics.PreferredBackBufferWidth / 10, _graphics.PreferredBackBufferHeight / 10);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1d / 144d);
@@ -35,7 +32,7 @@ namespace PocMonoGame
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // Add your initialization logic here
             base.Initialize();
         }
 
@@ -43,7 +40,7 @@ namespace PocMonoGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // use this.Content to load your game content here
             levTexture = Content.Load<Texture2D>("lev");
             zerglingTexture = Content.Load<Texture2D>("zergling");
             scoreFont = Content.Load<SpriteFont>("score");
@@ -57,7 +54,7 @@ namespace PocMonoGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            // Add your update logic here
             //var kstate = Keyboard.GetState();
             snakeBoard.Tick();
             base.Update(gameTime);
@@ -67,7 +64,7 @@ namespace PocMonoGame
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
+            // Add your drawing code here
             _spriteBatch.Begin();
 
             foreach (var tail in snakeBoard.GetTail())
