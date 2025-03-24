@@ -19,6 +19,7 @@ namespace PocMonoGame
         private int bestScore;
         // Set this to 0 to disable the rule where the food tries to spawn in a reachable position
         private const int MAX_RETRIES_FOR_NEXT_FOOD = 100;
+        private const bool ENABLE_AGGRESSIVE_PATH_RECALCULATION = true;
 
         public SnakeEngine(int width, int height)
         {
@@ -54,9 +55,26 @@ namespace PocMonoGame
             else if( snake.Count > 0)
             {
                 snake.RemoveAt(0);
+                if(ENABLE_AGGRESSIVE_PATH_RECALCULATION)
+                {
+                    AggressivePathRecalculation();
+                }
             }
 
             snake.Add(pathToFood.Dequeue());
+        }
+
+        private void AggressivePathRecalculation()
+        {
+            var tickOptimalPath = new Queue<(int x, int y)>(new Pathfinder().GeneratePathAstar(
+                GetSnakeHeadPos(),
+                food,
+                width,
+                height,
+                snake.Contains
+            ));
+            if (tickOptimalPath.Count + 1 < pathToFood.Count)
+                pathToFood = tickOptimalPath;
         }
 
         private void GenerateNextFoodAndPathToIt()
