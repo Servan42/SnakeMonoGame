@@ -1,6 +1,6 @@
 ## Description
 
-Automatic snake with A* on MonoGame .NET Framework.
+Automatic snake with A* on MonoGame framework for .NET .
 
 ## Setup
 
