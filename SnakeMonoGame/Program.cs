@@ -1,2 +1,2 @@
-﻿using var game = new PocMonoGame.Game1();
+﻿using var game = new SnakeMonoGame.Game1();
 game.Run();

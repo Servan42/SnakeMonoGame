@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 
 // https://docs.monogame.net/articles/getting_started/5_adding_basic_code.html
-namespace PocMonoGame
+namespace SnakeMonoGame
 {
     public class Game1 : Game
     {
